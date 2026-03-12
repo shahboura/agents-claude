@@ -12,7 +12,7 @@ Get up and running with Claude-targeted agents in under 5 minutes.
 ## Prerequisites
 
 - [Claude Code](https://code.claude.com/docs/en/overview) installed
-- Node.js/npm and Git
+- Node.js/npm
 - Any project (existing repos work perfectly)
 
 ## Quick Setup (60 seconds)

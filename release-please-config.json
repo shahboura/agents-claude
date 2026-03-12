@@ -3,7 +3,8 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "@shahboura/agents-claude"
+      "package-name": "@shahboura/agents-claude",
+      "component": "agents-claude"
     }
   },
   "release-type": "node",
