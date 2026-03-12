@@ -142,7 +142,7 @@ jobs:
           go-version: 'stable'
 
       - name: Install gitleaks
-        run: go install github.com/gitleaks/gitleaks/v8@v8.28.0
+        run: go install github.com/zricethezav/gitleaks/v8@v8.28.0
 
       - name: Run gitleaks scan
         run: |
