@@ -2,6 +2,13 @@
 
 All notable changes in this repository are documented here.
 
+## [1.0.1](https://github.com/shahboura/agents-claude/compare/v1.0.0...v1.0.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* correct gitleaks go module install path ([8646e5a](https://github.com/shahboura/agents-claude/commit/8646e5ab05ec0186b17272f48e3c8d1c2f015c5f))
+
 ## 1.0.0 (2026-03-12)
 
 
