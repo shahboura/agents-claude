@@ -17,6 +17,8 @@ Get up and running with Claude-targeted agents in under 5 minutes.
 
 ## Quick Setup (60 seconds)
 
+> **Package naming:** install from `@shahboura/agents-claude`; the CLI command is still `agents-claude`.
+
 ### Via npx (Recommended)
 
 ```bash

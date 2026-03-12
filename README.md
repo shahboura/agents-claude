@@ -1,7 +1,7 @@
 # Claude Agents Pack
 
 [![Validate Agents & Documentation](https://github.com/shahboura/agents-claude/actions/workflows/validate.yml/badge.svg)](https://github.com/shahboura/agents-claude/actions/workflows/validate.yml)
-[![npm version](https://img.shields.io/npm/v/@shahboura/agents-claude)](https://www.npmjs.com/package/@shahboura/agents-claude)
+[![npm version](https://img.shields.io/npm/v/%40shahboura/agents-claude)](https://www.npmjs.com/package/@shahboura/agents-claude)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://shahboura.github.io/agents-claude/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -49,6 +49,12 @@ Install behavior note:
 Package note:
 - Official npm package is `@shahboura/agents-claude`.
 - The installed CLI command remains `agents-claude`.
+
+### Package Naming (Important)
+
+- Install from `@shahboura/agents-claude` (scoped package).
+- Run the CLI as `agents-claude` after global install.
+- If you see unscoped `agents-claude` on npm, treat it as a different package.
 
 Uninstall behavior:
 - `--uninstall` removes local project setup (`.claude/`) and backs up

@@ -22,6 +22,8 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
 
 ## Quick Start
 
+> Install package: `@shahboura/agents-claude` · CLI command: `agents-claude`
+
 1. Install:
 
    ```bash
