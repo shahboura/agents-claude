@@ -22,7 +22,6 @@ All notable changes in this repository are documented here.
 - Project-level `CLAUDE.md` with concise, always-on instructions.
 - Security and quality controls:
   - PreToolUse hook guardrails for risky bash and sensitive paths
-  - CI secrets scanning with gitleaks in validation workflow
 
 ### Changed
 

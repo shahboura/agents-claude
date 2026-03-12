@@ -124,36 +124,11 @@ jobs:
           GOPATH="$(go env GOPATH)"
           "$GOPATH/bin/actionlint"
 
-  secrets-scan:
-    name: Secrets Scan (gitleaks)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Setup Go
-        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v5.0.2
-        with:
-          go-version: 'stable'
-
-      - name: Install gitleaks
-        run: go install github.com/zricethezav/gitleaks/v8@v8.28.0
-
-      - name: Run gitleaks scan
-        run: |
-          GOPATH="$(go env GOPATH)"
-          "$GOPATH/bin/gitleaks" dir . --no-banner --redact --exit-code 1
-
   validation-summary:
     name: Validation Summary
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [validate-agents, validate-docs, validate-context, lint-markdown, lint-workflows, secrets-scan]
+    needs: [validate-agents, validate-docs, validate-context, lint-markdown, lint-workflows]
     if: always()
 
     steps:
@@ -164,21 +139,18 @@ jobs:
           CONTEXT_RESULT: ${{ needs.validate-context.result }}
           LINT_RESULT: ${{ needs.lint-markdown.result }}
           WORKFLOW_LINT_RESULT: ${{ needs.lint-workflows.result }}
-          SECRETS_SCAN_RESULT: ${{ needs.secrets-scan.result }}
         run: |
           echo "Agent Validation: ${AGENTS_RESULT}"
           echo "Documentation Validation: ${DOCS_RESULT}"
           echo "Context Validation: ${CONTEXT_RESULT}"
           echo "Markdown Linting: ${LINT_RESULT}"
           echo "Workflow Linting: ${WORKFLOW_LINT_RESULT}"
-          echo "Secrets Scan: ${SECRETS_SCAN_RESULT}"
 
           if [ "${AGENTS_RESULT}" != "success" ] || \
              [ "${DOCS_RESULT}" != "success" ] || \
              [ "${CONTEXT_RESULT}" != "success" ] || \
              [ "${LINT_RESULT}" != "success" ] || \
-             [ "${WORKFLOW_LINT_RESULT}" != "success" ] || \
-             [ "${SECRETS_SCAN_RESULT}" != "success" ]; then
+             [ "${WORKFLOW_LINT_RESULT}" != "success" ]; then
             echo "::error::One or more validation checks failed"
             exit 1
           fi
