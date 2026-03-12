@@ -18,7 +18,7 @@ Quick jump: [Agents](#agents) · [Skills Matrix](./docs/skills-matrix.md) · [Sk
 
 ## Quick Start
 
-**Requires:** Node.js
+**Requires:** Node.js and npm
 
 ```bash
 # Via npx (recommended)
