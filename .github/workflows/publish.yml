@@ -1,0 +1,75 @@
+name: Release & Publish to npm
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release Please
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ needs.release.outputs.release_created == 'true' }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing (OIDC)
+    environment:
+      name: npm-publish
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate before publish
+        run: npm run validate:all
+
+      - name: Show release context
+        run: |
+          echo "release_created=${{ needs.release.outputs.release_created }}"
+          echo "tag_name=${{ needs.release.outputs.tag_name }}"
+          echo "version=${{ needs.release.outputs.version }}"
+
+      - name: Publish to npm
+        run: npm publish --access public

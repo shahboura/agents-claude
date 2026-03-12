@@ -1,0 +1,21 @@
+# Just the Docs Configuration
+title: Claude Agents Pack
+description: Lean Claude Code agent pack with 8 specialized subagents, on-demand skills, and secure defaults
+url: https://shahboura.github.io
+baseurl: /agents-claude
+
+# Theme
+theme: just-the-docs
+
+plugins:
+  - jekyll-seo-tag
+
+color_scheme: dark
+
+# Navigation
+nav_external_links:
+  - title: GitHub Repository
+    url: https://github.com/shahboura/agents-claude
+
+# Footer
+footer_content: "Copyright &copy; 2025-2026 Shehab Elhadidy. Licensed under the MIT License."

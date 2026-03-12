@@ -1,0 +1,58 @@
+{
+  "name": "agents-claude",
+  "version": "1.2.2",
+  "description": "Claude-targeted agent pack for software development with specialized subagents, on-demand skills, security guardrails, and context-optimized workflows.",
+  "files": [
+    "install.js",
+    "index.js",
+    ".claude",
+    "CLAUDE.md"
+  ],
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahboura/agents-claude.git"
+  },
+  "homepage": "https://shahboura.github.io/agents-claude/",
+  "bin": {
+    "agents-claude": "install.js"
+  },
+  "scripts": {
+    "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .github",
+    "lint:md:fix": "markdownlint \"**/*.md\" --ignore node_modules --ignore .github --fix",
+    "validate:agents": "node scripts/validate-agents.js",
+    "validate:docs": "node scripts/validate-docs.js",
+    "validate:context": "node scripts/check-context-size.js",
+    "validate:all": "npm run validate:agents && npm run validate:docs && npm run validate:context && npm run lint:md"
+  },
+  "devDependencies": {
+    "markdownlint-cli": "^0.48.0"
+  },
+  "keywords": [
+    "claude-code",
+    "ai-agents",
+    "code-generation",
+    "development-tools",
+    "coding-standards",
+    "code-review",
+    "documentation",
+    "multi-language",
+    "dotnet",
+    "python",
+    "typescript",
+    "flutter",
+    "go",
+    "java",
+    "nodejs",
+    "react",
+    "ruby",
+    "rust",
+    "ci-cd",
+    "automation"
+  ],
+  "author": "shahboura",
+  "license": "MIT"
+}
