@@ -1,7 +1,7 @@
 # Claude Agents Pack
 
 [![Validate Agents & Documentation](https://github.com/shahboura/agents-claude/actions/workflows/validate.yml/badge.svg)](https://github.com/shahboura/agents-claude/actions/workflows/validate.yml)
-[![npm version](https://img.shields.io/npm/v/agents-claude)](https://www.npmjs.com/package/agents-claude)
+[![npm version](https://img.shields.io/npm/v/@shahboura/agents-claude)](https://www.npmjs.com/package/@shahboura/agents-claude)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://shahboura.github.io/agents-claude/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -22,29 +22,33 @@ Quick jump: [Agents](#agents) · [Skills Matrix](./docs/skills-matrix.md) · [Sk
 
 ```bash
 # Via npx (recommended)
-npx agents-claude --global
+npx @shahboura/agents-claude --global
 
 # Alternative (direct npm install)
-npm install -g agents-claude && agents-claude --global
+npm install -g @shahboura/agents-claude && agents-claude --global
 
 # Project install (current directory only)
-npx agents-claude --project .
+npx @shahboura/agents-claude --project .
 
 # Install with specific languages only
-npx agents-claude --global --languages python,typescript
+npx @shahboura/agents-claude --global --languages python,typescript
 
 # Update existing installation
-npx agents-claude --update
+npx @shahboura/agents-claude --update
 
 # Uninstall
-npx agents-claude --uninstall
+npx @shahboura/agents-claude --uninstall
 
 # Global uninstall
-npx agents-claude --uninstall --global
+npx @shahboura/agents-claude --uninstall --global
 ```
 
 Install behavior note:
 - `npx`/`npm` installs from the published npm package version (deterministic release artifact).
+
+Package note:
+- Official npm package is `@shahboura/agents-claude`.
+- The installed CLI command remains `agents-claude`.
 
 Uninstall behavior:
 - `--uninstall` removes local project setup (`.claude/`) and backs up

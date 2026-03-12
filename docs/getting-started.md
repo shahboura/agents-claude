@@ -21,16 +21,16 @@ Get up and running with Claude-targeted agents in under 5 minutes.
 
 ```bash
 # Global install
-npx agents-claude --global
+npx @shahboura/agents-claude --global
 
 # Project install
-npx agents-claude --project .
+npx @shahboura/agents-claude --project .
 
 # Install with specific languages only
-npx agents-claude --global --languages python,typescript
+npx @shahboura/agents-claude --global --languages python,typescript
 
 # Update existing installation
-npx agents-claude --update
+npx @shahboura/agents-claude --update
 ```
 
 ### Via curl
@@ -59,10 +59,10 @@ curl -fsSL https://raw.githubusercontent.com/shahboura/agents-claude/main/instal
 ### Uninstall
 
 ```bash
-npx agents-claude --uninstall
+npx @shahboura/agents-claude --uninstall
 
 # Global uninstall
-npx agents-claude --uninstall --global
+npx @shahboura/agents-claude --uninstall --global
 ```
 
 Behavior notes:

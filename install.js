@@ -398,7 +398,7 @@ EXAMPLES:
   node install.js --update
   node install.js --uninstall
   node install.js --uninstall --global
-  npx agents-claude --global
+  npx @shahboura/agents-claude --global
 
 PREREQUISITES:
   - Node.js

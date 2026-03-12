@@ -41,7 +41,7 @@ description: Common issues and solutions for Claude agent/skill configurations.
 
 - Ensure Git and Node.js are installed
 - Check internet connectivity for repository clone
-- Try `npx agents-claude --global` instead of curl
+- Try `npx @shahboura/agents-claude --global` instead of curl
 
 ### Skills not loading
 

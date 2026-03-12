@@ -25,7 +25,7 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
 1. Install:
 
    ```bash
-   npx agents-claude --global
+   npx @shahboura/agents-claude --global
    ```
 
 2. Run:
