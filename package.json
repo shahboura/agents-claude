@@ -4,14 +4,9 @@
   "description": "Claude-targeted agent pack for software development with specialized subagents, on-demand skills, security guardrails, and context-optimized workflows.",
   "files": [
     "install.js",
-    "index.js",
     ".claude",
     "CLAUDE.md"
   ],
-  "main": "index.js",
-  "exports": {
-    ".": "./index.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shahboura/agents-claude.git"
