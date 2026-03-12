@@ -2,6 +2,14 @@
 
 All notable changes in this repository are documented here.
 
+## 1.0.0 (2026-03-12)
+
+
+### Bug Fixes
+
+* migrate npm distribution to scoped package ([3517e1d](https://github.com/shahboura/agents-claude/commit/3517e1d77ad9867bc771a0ed6d1a2a90751cb880))
+* remove unused module entrypoint metadata ([44e4e9b](https://github.com/shahboura/agents-claude/commit/44e4e9b0ae9fdfff01c724b5004c408f9dd0ff35))
+
 ## 1.2.2 (2026-03-11)
 
 ### Added
