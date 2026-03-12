@@ -2,6 +2,13 @@
 
 All notable changes in this repository are documented here.
 
+## [1.0.2](https://github.com/shahboura/agents-claude/compare/v1.0.1...v1.0.2) (2026-03-12)
+
+
+### Bug Fixes
+
+* clarify quick-start runtime prerequisite ([3eee5e3](https://github.com/shahboura/agents-claude/commit/3eee5e3914730d4cffb3f43749bf90db97c6efc8))
+
 ## [1.0.1](https://github.com/shahboura/agents-claude/compare/v1.0.0...v1.0.1) (2026-03-12)
 
 
