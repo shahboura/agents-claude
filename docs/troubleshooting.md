@@ -39,10 +39,13 @@ description: Common issues and solutions for Claude agent/skill configurations.
 
 ### Installation fails
 
-- Ensure Git and Node.js are installed
-- Check internet connectivity for repository clone
+- Ensure Node.js/npm are installed
+- Check internet connectivity for npm/curl download
 - Try `npx @shahboura/agents-claude --global` instead of curl
 - Confirm you are installing the scoped package: `@shahboura/agents-claude`
+- After global install, run `agents-claude` (not the package name)
+- If you installed unscoped `agents-claude`, uninstall it and install the
+  scoped package
 
 ### Skills not loading
 

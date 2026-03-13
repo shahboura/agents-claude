@@ -17,7 +17,12 @@ Get up and running with Claude-targeted agents in under 5 minutes.
 
 ## Quick Setup (60 seconds)
 
-> **Package naming:** install from `@shahboura/agents-claude`; the CLI command is still `agents-claude`.
+> **Package naming:** install from `@shahboura/agents-claude`; after global install,
+> run the CLI command as `agents-claude`. If you find unscoped `agents-claude`
+> on npm, treat it as a different package.
+
+`agents-claude` is the installer/maintenance CLI. Your normal workflow runs in
+`claude`.
 
 ### Via npx (Recommended)
 
@@ -68,9 +73,11 @@ npx @shahboura/agents-claude --uninstall --global
 ```
 
 Behavior notes:
-- `--uninstall` removes local project setup and backs up `CLAUDE.md`.
-- `--uninstall --global` removes/backups global Claude agent folders in
-  `~/.claude` and keeps `~/.claude/settings.json` intentionally.
+- `--uninstall` backs up `CLAUDE.md` to `CLAUDE.<timestamp>.bk.md` and removes
+  local `.claude/`.
+- `--uninstall --global` renames/removes global Claude folders
+  (`agents`, `skills`, `rules`, `hooks`) to timestamped backups under
+  `~/.claude`, and intentionally keeps `~/.claude/settings.json`.
 
 ## Your First Run
 

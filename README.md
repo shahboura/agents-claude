@@ -46,24 +46,20 @@ npx @shahboura/agents-claude --uninstall --global
 Install behavior note:
 - `npx`/`npm` installs from the published npm package version (deterministic release artifact).
 
-Package note:
-- Official npm package is `@shahboura/agents-claude`.
-- The installed CLI command remains `agents-claude`.
-
-### Package Naming (Important)
-
+Package naming:
 - Install from `@shahboura/agents-claude` (scoped package).
-- Run the CLI as `agents-claude` after global install.
+- After global install, run the CLI command as `agents-claude`.
+- `agents-claude` is the installer/maintenance CLI; day-to-day use runs in `claude`.
 - If you see unscoped `agents-claude` on npm, treat it as a different package.
 
 Uninstall behavior:
-- `--uninstall` removes local project setup (`.claude/`) and backs up
-  `CLAUDE.md`.
-- `--uninstall --global` backs up/removes global folders under `~/.claude`
-  (`agents`, `skills`, `rules`, `hooks`) and intentionally keeps
-  `~/.claude/settings.json`.
+- `--uninstall` backs up `CLAUDE.md` to `CLAUDE.<timestamp>.bk.md` and removes
+  local `.claude/`.
+- `--uninstall --global` renames/removes global folders under `~/.claude`
+  (`agents`, `skills`, `rules`, `hooks`) to timestamped backups and
+  intentionally keeps `~/.claude/settings.json`.
 
-Then run:
+First run in Claude Code:
 
 ```bash
 claude

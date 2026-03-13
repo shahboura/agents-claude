@@ -11,6 +11,9 @@ description: Slash-invoked skills and reusable workflows for Claude Code.
 
 Type `/skill-name` in Claude Code to run.
 
+Install package `@shahboura/agents-claude`, use `agents-claude` for
+install/update/uninstall, and run day-to-day workflows in `claude`.
+
 Most commands accept an optional argument to scope the task:
 `/skill-name [argument]` — the argument is passed directly to the target agent.
 

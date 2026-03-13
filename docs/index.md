@@ -22,7 +22,10 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
 
 ## Quick Start
 
-> Install package: `@shahboura/agents-claude` · CLI command: `agents-claude`
+> Install package: `@shahboura/agents-claude` · after global install, run
+> `agents-claude` (unscoped `agents-claude` on npm is a different package)
+
+`agents-claude` is for install/update/uninstall; day-to-day use runs in `claude`.
 
 1. Install:
 
