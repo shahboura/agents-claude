@@ -54,6 +54,7 @@ description: Common issues and solutions for Claude agent/skill configurations.
 - Use `npx @shahboura/agents-claude --uninstall --global` to remove global install
 - Use `npx @shahboura/agents-claude --uninstall --all` to remove both global and project scopes
 - If global is still installed, Claude Code may continue loading global agents/settings
+- If status shows `installed (version-marker)`, uninstall removes the marker safely; run `--update` first to recreate a manifest, then uninstall for full managed-file cleanup
 
 ### How do I restore from installer backups?
 
