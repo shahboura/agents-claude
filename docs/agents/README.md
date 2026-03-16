@@ -43,14 +43,14 @@ See exact allowlists in the [Skills Matrix](../skills-matrix).
 
 ```mermaid
 flowchart TD
-    U[User Request in Claude] --> O[@orchestrator]
-    U --> P[@planner]
-    U --> C[@codebase]
-    U --> R[@review]
-    U --> D[@docs]
-    U --> E[@em-advisor]
-    U --> B[@blogger]
-    U --> X[@brutal-critic]
+    U["User Request in Claude"] --> O["orchestrator"]
+    U --> P["planner"]
+    U --> C["codebase"]
+    U --> R["review"]
+    U --> D["docs"]
+    U --> E["em-advisor"]
+    U --> B["blogger"]
+    U --> X["brutal-critic"]
 
     subgraph Skills [Skills (.claude/skills)]
       L1[Language Skills\npython/typescript/go/...]
@@ -61,13 +61,18 @@ flowchart TD
 
     O -.loads on demand.-> L1
     O -.loads on demand.-> L2
+    O -.loads on demand.-> L4
     C -.loads on demand.-> L1
+    C -.loads on demand.-> L4
     R -.loads on demand.-> L1
     R -.loads on demand.-> L2
     D -.loads on demand.-> L2
     B -.loads on demand.-> L3
     X -.loads on demand.-> L3
     P -.loads on demand.-> L1
+
+    classDef legend fill:#1f2937,stroke:#4b5563,color:#e5e7eb;
+    K["Dashed edge = loads skill on demand"]:::legend
 ```
 
 If Mermaid does not render in your docs host, the flow still reads top-to-bottom:
