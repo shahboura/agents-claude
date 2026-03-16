@@ -53,11 +53,39 @@ You can always invoke user-invocable skills manually with `/skill-name`.
 
 For high-impact workflows, set `disable-model-invocation: true` to require manual invocation.
 
+Recommended command-skill frontmatter (least privilege):
+
+```yaml
+---
+name: my-command
+description: What it does
+disable-model-invocation: true
+user-invocable: true
+argument-hint: "[path or scope]"
+---
+```
+
+> Note: This repository targets Claude skill schema where `context`, `agent`, and
+> `allowed-tools` may be unsupported depending on your Claude version.
+> Keep skills schema-compliant first, then use agent/tool restrictions via
+> `.claude/agents/*.md` and `.claude/settings.json`.
+
 ### Skill Selection Guardrails
 
 - Load skills on demand for matching tasks only.
 - Use one relevant skill by default; add a second only for clear cross-domain need.
 - If technology/domain is ambiguous, ask for clarification before loading.
+
+### Installer Lifecycle Notes
+
+- `agents-claude` supports scope-aware lifecycle operations:
+  - `--update` (auto-detects installed scopes)
+  - `--update --all`
+  - `--uninstall --global`
+  - `--uninstall --all`
+  - `--status`
+- Uninstall is manifest-based and removes installer-managed files only.
+- Backup sessions include `backup-manifest.json` restore hints.
 
 ### Security Hardening
 

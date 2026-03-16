@@ -3,8 +3,7 @@ name: refactor-plan
 description: Produce a safe refactor strategy with staged rollout.
 argument-hint: "[target module, file, or scope]"
 disable-model-invocation: true
-context: fork
-agent: planner
+user-invocable: true
 ---
 
 Create a refactor plan for: $ARGUMENTS

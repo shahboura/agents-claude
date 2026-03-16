@@ -2,8 +2,7 @@
 name: 1-on-1-prep
 description: Prepare for effective 1-on-1 meetings.
 disable-model-invocation: true
-context: fork
-agent: em-advisor
+user-invocable: true
 argument-hint: "[person] [context]"
 ---
 

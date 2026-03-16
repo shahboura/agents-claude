@@ -3,8 +3,7 @@ name: content-review
 description: Score and critique content quality before publishing.
 argument-hint: "[content text, file path, or topic]"
 disable-model-invocation: true
-context: fork
-agent: brutal-critic
+user-invocable: true
 ---
 
 Review this content: $ARGUMENTS

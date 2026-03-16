@@ -27,3 +27,4 @@ Start every response with: **PLANNING MODE (READ-ONLY)**.
 ## Skill policy
 - Load skills only when domain conventions are required.
 - Keep plan concise, specific, and executable.
+- For responsive UX planning across phone/tablet/desktop, load `ux-responsive` on demand.

@@ -47,6 +47,34 @@ description: Common issues and solutions for Claude agent/skill configurations.
 - If you installed unscoped `agents-claude`, uninstall it and install the
   scoped package
 
+### Uninstall does not seem to work
+
+- Check active scope with `npx @shahboura/agents-claude --status`
+- Default `npx @shahboura/agents-claude --uninstall` only targets the current project scope
+- Use `npx @shahboura/agents-claude --uninstall --global` to remove global install
+- Use `npx @shahboura/agents-claude --uninstall --all` to remove both global and project scopes
+- If global is still installed, Claude Code may continue loading global agents/settings
+
+### How do I restore from installer backups?
+
+- Project scope backups are in `<project>/.claude/.backups/`
+- Global scope backups are in `~/.claude/.backups/`
+- Open the latest session folder and inspect `backup-manifest.json`
+- Copy backed-up files to original paths listed in the manifest
+- Retention keeps the latest 10 sessions and sessions newer than 30 days
+
+### Existing settings changed unexpectedly
+
+- Installer only adds missing safe defaults from package `.claude/settings.json`.
+- Existing project/global settings values are preserved.
+- Re-run install with `--project` or `--global` and check logs for `Updated settings safely`.
+
+### Existing CLAUDE.md was removed unexpectedly
+
+- Installer only removes `CLAUDE.md` when it created/managed it in manifest mode.
+- If your `CLAUDE.md` existed before install, uninstall should leave it untouched.
+- If removal happened in older versions, restore from backup session using `backup-manifest.json`.
+
 ### Skills not loading
 
 - Skills are available via `/skill-name` when user-invocable

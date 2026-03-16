@@ -5,7 +5,9 @@ description: Python best practices with type hints, structure, and testing conve
 
 - Format and lint with `ruff format` + `ruff check`; type-check with `mypy --strict`.
 - Run tests with `pytest`; use `pytest-cov` for coverage gates.
-- Use `dataclasses` or `pydantic` for data models; avoid raw dicts for structured data.
-- Prefer explicit type annotations on all public functions and class attributes.
-- Handle errors with typed exceptions; avoid bare `except` clauses.
-- Structure packages with `src/` layout; keep `__init__.py` minimal.
+- Use `dataclasses`, Pydantic, or `TypedDict` for structured boundaries; avoid raw dict contracts.
+- Prefer explicit type annotations on all public functions, class attributes, and fixture signatures.
+- Use context managers for files/network/db resources; avoid leaked handles.
+- Prefer `pathlib.Path` over `os.path` and standard import order (stdlib → third-party → local).
+- Use `async/await` for I/O-bound code and ensure async calls are awaited in tests/orchestration.
+- Handle errors with specific exceptions and preserve context; avoid bare `except` clauses.

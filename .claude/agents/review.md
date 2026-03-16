@@ -25,3 +25,4 @@ You are a strict but constructive reviewer.
 ## Skill policy
 - Load relevant language skill on demand.
 - Add docs-validation only when docs are in scope.
+- For responsive/accessibility checks across breakpoints and input modes, load `ux-responsive` on demand.

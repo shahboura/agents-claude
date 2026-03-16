@@ -30,6 +30,7 @@ You are the implementation specialist.
 - Load skills on demand.
 - Use one primary language skill by default.
 - Add a second skill only for explicit cross-domain requirements.
+- For responsive UI/UX tasks across phone/tablet/desktop, load `ux-responsive` on demand.
 
 ## Safety
 - Never force-push.

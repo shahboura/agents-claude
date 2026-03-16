@@ -3,19 +3,55 @@ title: Claude Agents Pack
 description: Lean Claude Code agent pack with 8 specialized subagents, on-demand skills, and secure defaults
 url: https://shahboura.github.io
 baseurl: /agents-claude
+logo: /assets/assets-logo.png
 
 # Theme
 theme: just-the-docs
 
 plugins:
   - jekyll-seo-tag
+  - jekyll-sitemap
+
+author:
+  name: Shehab ElHadidy
+
+twitter:
+  username: shahboura
+
+social:
+  name: Shehab ElHadidy
+  links:
+    - https://github.com/shahboura
+    - https://www.linkedin.com/in/shehabelhadidy/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/assets-og.png
+      twitter:
+        card: summary_large_image
+        image: /assets/assets-og.png
 
 color_scheme: dark
+
+mermaid:
+  version: "11.13.0"
 
 # Navigation
 nav_external_links:
   - title: GitHub Repository
     url: https://github.com/shahboura/agents-claude
+  - title: Author on GitHub
+    url: https://github.com/shahboura
+  - title: Author on LinkedIn
+    url: https://www.linkedin.com/in/shehabelhadidy/
 
 # Footer
-footer_content: "Copyright &copy; 2025-2026 Shehab Elhadidy. Licensed under the MIT License."
+footer_content: "Copyright &copy; 2025-2026 Shehab ElHadidy. Licensed under the MIT License. · <a href=\"https://github.com/shahboura/agents-claude\">Repository</a> · <a href=\"https://github.com/shahboura\">Author</a>"
+
+aux_links:
+  "GitHub Repository":
+    - "https://github.com/shahboura/agents-claude"
+  "NPM Package":
+    - "https://www.npmjs.com/package/@shahboura/agents-claude"

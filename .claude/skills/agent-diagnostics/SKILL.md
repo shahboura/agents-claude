@@ -2,6 +2,7 @@
 name: agent-diagnostics
 description: Validate agent configuration, instructions, and project setup for common issues.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Agent Diagnostics

@@ -5,6 +5,10 @@ nav_order: 1
 permalink: /
 description: Lean Claude Code agent pack with 8 specialized subagents, on-demand skills, and secure defaults.
 keywords: claude code, ai agents, subagents, skills, development workflow, code review, documentation
+image: /assets/assets-og.png
+twitter:
+  card: summary_large_image
+  image: /assets/assets-og.png
 ---
 
 # Claude Agents Pack
@@ -33,6 +37,8 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
    npx @shahboura/agents-claude --global
    ```
 
+   Installer package/command: `@shahboura/agents-claude` / `agents-claude`
+
 2. Run:
 
    ```
@@ -40,6 +46,8 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
    /init
    @orchestrator Build a user API
    ```
+
+   Runtime command: `claude`
 
 ## Agents
 
@@ -64,6 +72,14 @@ For exact allowlists, use the [Skills Matrix](skills-matrix).
 - [Commands & Skills](commands)
 - [Troubleshooting](troubleshooting)
 - [Skills Matrix](skills-matrix)
+
+## Author & Project Links
+
+- Author: **Shehab ElHadidy**
+- GitHub (repo): <https://github.com/shahboura/agents-claude>
+- GitHub (author): <https://github.com/shahboura>
+- LinkedIn: <https://www.linkedin.com/in/shehabelhadidy/>
+- NPM package: <https://www.npmjs.com/package/@shahboura/agents-claude>
 
 ## Skill Loading Model (Claude)
 

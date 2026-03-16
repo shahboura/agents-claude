@@ -3,8 +3,7 @@ name: plan-project
 description: Create a multi-phase implementation plan for complex work.
 argument-hint: "[feature, objective, or epic]"
 disable-model-invocation: true
-context: fork
-agent: orchestrator
+user-invocable: true
 ---
 
 Create an orchestration plan for: $ARGUMENTS

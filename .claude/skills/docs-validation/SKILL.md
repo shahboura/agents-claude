@@ -2,6 +2,7 @@
 name: docs-validation
 description: Run documentation quality checks and link validation guidance.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 Validate documentation quality:

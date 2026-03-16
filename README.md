@@ -36,11 +36,20 @@ npx @shahboura/agents-claude --global --languages python,typescript
 # Update existing installation
 npx @shahboura/agents-claude --update
 
+# Force update both global + current project scopes
+npx @shahboura/agents-claude --update --all
+
 # Uninstall
 npx @shahboura/agents-claude --uninstall
 
 # Global uninstall
 npx @shahboura/agents-claude --uninstall --global
+
+# Uninstall both global + current project scopes
+npx @shahboura/agents-claude --uninstall --all
+
+# Check detected installation scopes
+npx @shahboura/agents-claude --status
 ```
 
 Install behavior note:
@@ -53,11 +62,33 @@ Package naming:
 - If you see unscoped `agents-claude` on npm, treat it as a different package.
 
 Uninstall behavior:
-- `--uninstall` backs up `CLAUDE.md` to `CLAUDE.<timestamp>.bk.md` and removes
-  local `.claude/`.
-- `--uninstall --global` renames/removes global folders under `~/.claude`
-  (`agents`, `skills`, `rules`, `hooks`) to timestamped backups and
-  intentionally keeps `~/.claude/settings.json`.
+- `npx @shahboura/agents-claude --uninstall` targets the **current project** by default.
+- Use `--global` or `--all` for explicit scope control.
+- Uninstall removes installer-managed files via install manifest tracking.
+- Project backups: `<project>/.claude/.backups/<timestamp>--<operation>--<scope>/`
+- Global backups: `~/.claude/.backups/<timestamp>--<operation>--<scope>/`
+- Backup retention: latest 10 sessions and sessions newer than 30 days.
+
+Restore from backup:
+1. Open the latest backup session folder.
+2. Review `backup-manifest.json` for file paths.
+3. Copy files back to their original paths.
+
+Update behavior:
+- `npx @shahboura/agents-claude --update` auto-detects and updates installed scopes (global and/or current project).
+- Use `--all`, `--global`, or `--project [dir]` to force explicit update scope.
+
+Settings behavior:
+- Installer merges only missing safe defaults in `.claude/settings.json`.
+- Existing permissions, sandbox, and hooks are preserved and never overwritten.
+- If `CLAUDE.md` already exists before install, installer leaves it unmanaged and will not remove it on uninstall.
+
+Scope behavior:
+- `--global` targets `~/.claude` only.
+- `--project [dir]` targets `<project>/.claude` and installer-managed `CLAUDE.md`.
+- `--update` auto-detects installed scopes and updates each.
+- `--uninstall` defaults to current project scope only.
+- `--all` applies update/uninstall to both global and current project scopes.
 
 First run in Claude Code:
 

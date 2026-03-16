@@ -38,6 +38,9 @@ npx @shahboura/agents-claude --global --languages python,typescript
 
 # Update existing installation
 npx @shahboura/agents-claude --update
+
+# Force update both global + current project scopes
+npx @shahboura/agents-claude --update --all
 ```
 
 ### Via curl
@@ -66,18 +69,37 @@ curl -fsSL https://raw.githubusercontent.com/shahboura/agents-claude/main/instal
 ### Uninstall
 
 ```bash
+# Current project scope (default)
 npx @shahboura/agents-claude --uninstall
 
 # Global uninstall
 npx @shahboura/agents-claude --uninstall --global
+
+# Uninstall both global + current project scopes
+npx @shahboura/agents-claude --uninstall --all
+
+# Check detected install scopes
+npx @shahboura/agents-claude --status
 ```
 
-Behavior notes:
-- `--uninstall` backs up `CLAUDE.md` to `CLAUDE.<timestamp>.bk.md` and removes
-  local `.claude/`.
-- `--uninstall --global` renames/removes global Claude folders
-  (`agents`, `skills`, `rules`, `hooks`) to timestamped backups under
-  `~/.claude`, and intentionally keeps `~/.claude/settings.json`.
+- Default uninstall applies to the **current project scope**.
+- Use `--global` or `--all` to target non-project scope.
+- Removes installer-managed files using install manifest tracking.
+- Project backups: `<project>/.claude/.backups/<timestamp>--<operation>--<scope>/`
+- Global backups: `~/.claude/.backups/<timestamp>--<operation>--<scope>/`
+- Backup retention: latest 10 sessions and sessions newer than 30 days.
+- Installer only merges missing safe defaults into existing `.claude/settings.json`.
+- Existing permissions/sandbox/hooks remain unchanged.
+- If `CLAUDE.md` already exists before install, installer leaves it unmanaged and does not remove it on uninstall.
+
+Scope matrix:
+- `--global` → global scope only (`~/.claude`)
+- `--project [dir]` → project scope only (`<project>/.claude` + installer-managed `CLAUDE.md`)
+- `--update` → auto-detects and updates installed scopes
+- `--uninstall` → current project scope by default
+- `--all` → both global and current project scopes
+
+To restore files, use `backup-manifest.json` from a backup session and copy files back to original paths.
 
 ## Your First Run
 

@@ -9,6 +9,12 @@
 const fs = require('fs');
 const path = require('path');
 
+const EXCLUDED_DIRS = new Set([
+  'node_modules',
+  '.git',
+  'agents-opencode',
+]);
+
 // Colors for output (matches install.js pattern)
 const colors = {
   red: '\x1b[31m',
@@ -23,7 +29,7 @@ function log(color, message) {
 }
 
 /**
- * Recursively find all .md files, excluding node_modules and .git directories.
+ * Recursively find all .md files, excluding generated/vendor directories.
  */
 function findMarkdownFiles(dir) {
   const results = [];
@@ -39,7 +45,7 @@ function findMarkdownFiles(dir) {
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      if (entry.name === 'node_modules' || entry.name === '.git') {
+      if (EXCLUDED_DIRS.has(entry.name)) {
         continue;
       }
       results.push(...findMarkdownFiles(fullPath));
