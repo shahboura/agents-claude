@@ -40,18 +40,12 @@ mermaid:
 
 # Navigation
 nav_external_links:
-  - title: GitHub Repository
+  - title: "🐙 GitHub"
     url: https://github.com/shahboura/agents-claude
-  - title: Author on GitHub
-    url: https://github.com/shahboura
-  - title: Author on LinkedIn
+  - title: "💼 LinkedIn"
     url: https://www.linkedin.com/in/shehabelhadidy/
+  - title: "📦 npm"
+    url: https://www.npmjs.com/package/@shahboura/agents-claude
 
 # Footer
 footer_content: "Copyright &copy; 2025-2026 Shehab ElHadidy. Licensed under the MIT License. · <a href=\"https://github.com/shahboura/agents-claude\">Repository</a> · <a href=\"https://github.com/shahboura\">Author</a>"
-
-aux_links:
-  "GitHub Repository":
-    - "https://github.com/shahboura/agents-claude"
-  "NPM Package":
-    - "https://www.npmjs.com/package/@shahboura/agents-claude"

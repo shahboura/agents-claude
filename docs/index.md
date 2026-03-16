@@ -82,14 +82,6 @@ For exact allowlists, use the [Skills Matrix](skills-matrix).
 - [Troubleshooting](troubleshooting)
 - [Skills Matrix](skills-matrix)
 
-## Author & Project Links
-
-- Author: **Shehab ElHadidy**
-- GitHub (repo): <https://github.com/shahboura/agents-claude>
-- GitHub (author): <https://github.com/shahboura>
-- LinkedIn: <https://www.linkedin.com/in/shehabelhadidy/>
-- NPM package: <https://www.npmjs.com/package/@shahboura/agents-claude>
-
 ## Skill Loading Model (Claude)
 
 - Skills live under `.claude/skills/`.
