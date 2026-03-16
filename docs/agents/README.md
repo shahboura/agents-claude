@@ -41,7 +41,8 @@ See exact allowlists in the [Skills Matrix](../skills-matrix).
 
 ## Agent ↔ Skill Relationship (Quick Diagram)
 
-> Tip: if labels look small, scroll horizontally in the diagram container.
+> Tip: scroll horizontally to pan. Open in a new tab and browser-zoom (Ctrl/Cmd +)
+> for larger text.
 
 ```mermaid
 flowchart TD

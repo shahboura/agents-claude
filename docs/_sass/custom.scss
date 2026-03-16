@@ -42,33 +42,34 @@ table th {
 }
 
 /* Footer social icons (above Just the Docs line) */
-.site-footer .footer-social-links {
-  display: inline-flex;
+.site-footer .footer-action-links {
+  display: flex;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 0.4rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
 }
 
-.site-footer .footer-social-link {
+.site-footer .footer-action-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  border: 1px solid var(--border-color, #444);
+  height: 1.7rem;
+  padding: 0 0.65rem;
+  border: 1px solid var(--border-color, #4b5563);
   border-radius: 9999px;
+  background: transparent;
   color: var(--body-text-color, #d1d5db);
   text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
 }
 
-.site-footer .footer-social-link svg {
-  width: 0.85rem;
-  height: 0.85rem;
-  fill: currentColor;
-}
-
-.site-footer .footer-social-link:hover,
-.site-footer .footer-social-link:focus-visible {
+.site-footer .footer-action-link:hover,
+.site-footer .footer-action-link:focus-visible {
   border-color: var(--link-color, #58a6ff);
   color: var(--link-color, #58a6ff);
 }
@@ -80,11 +81,11 @@ table th {
 }
 
 .main-content .language-mermaid svg {
-  min-width: 920px;
+  max-width: none;
 }
 
 .main-content .language-mermaid text {
-  font-size: 16px !important;
+  font-size: 15px;
 }
 
 /* Responsive design improvements */
