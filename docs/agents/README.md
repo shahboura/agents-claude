@@ -52,11 +52,11 @@ flowchart TD
     U --> B["blogger"]
     U --> X["brutal-critic"]
 
-    subgraph Skills [Skills (.claude/skills)]
-      L1[Language Skills\npython/typescript/go/...]
-      L2[Utility Skills\ndocs-validation/agent-diagnostics/project-bootstrap]
-      L3[Content Skills\nblogger/brutal-critic]
-      L4[Workflow Skills\napi-docs/code-review/...]
+    subgraph Skills["Skills (.claude/skills)"]
+      L1["Language Skills<br/>python/typescript/go/..."]
+      L2["Utility Skills<br/>docs-validation/agent-diagnostics/project-bootstrap"]
+      L3["Content Skills<br/>blogger/brutal-critic"]
+      L4["Workflow Skills<br/>api-docs/code-review/..."]
     end
 
     O -.loads on demand.-> L1
@@ -71,8 +71,9 @@ flowchart TD
     X -.loads on demand.-> L3
     P -.loads on demand.-> L1
 
-    classDef legend fill:#1f2937,stroke:#4b5563,color:#e5e7eb;
-    K["Dashed edge = loads skill on demand"]:::legend
+    K["Dashed edge = loads skill on demand"]
+    class K legend
+    classDef legend fill:#1f2937,stroke:#4b5563,color:#e5e7eb
 ```
 
 If Mermaid does not render in your docs host, the flow still reads top-to-bottom:
