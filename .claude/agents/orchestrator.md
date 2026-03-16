@@ -36,6 +36,7 @@ You coordinate complex tasks in two modes:
 ## Skill policy
 - Load skills on demand per phase.
 - Keep active skill set minimal.
+- For cross-device UX/responsive phases, load `ux-responsive` on demand.
 
 ## Safety
 - Block destructive git/bash actions unless explicitly approved.

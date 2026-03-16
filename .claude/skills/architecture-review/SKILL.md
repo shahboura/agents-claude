@@ -3,8 +3,7 @@ name: architecture-review
 description: Review a system design for robustness, scalability, and risks.
 argument-hint: "[system, component, or design document]"
 disable-model-invocation: true
-context: fork
-agent: review
+user-invocable: true
 ---
 
 Review architecture/design for: $ARGUMENTS

@@ -39,6 +39,7 @@ Skills live in `.claude/skills/` and are loaded on demand:
 - `project-bootstrap`
 - `agent-diagnostics`
 - `docs-validation`
+- `ux-responsive`
 
 Recommended policy:
 

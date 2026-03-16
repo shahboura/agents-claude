@@ -1,0 +1,22 @@
+# Claude Agents Pack
+
+Canonical docs index for LLM/GEO discovery.
+
+Site: https://shahboura.github.io/agents-claude/
+Repository: https://github.com/shahboura/agents-claude
+Full index: https://shahboura.github.io/agents-claude/llms-full.txt
+
+## Core Pages
+- Home: https://shahboura.github.io/agents-claude/
+- Getting Started: https://shahboura.github.io/agents-claude/getting-started
+- Agents: https://shahboura.github.io/agents-claude/agents/README
+- Commands & Skills: https://shahboura.github.io/agents-claude/commands
+- Instructions: https://shahboura.github.io/agents-claude/instructions
+- Customization: https://shahboura.github.io/agents-claude/customization
+- Troubleshooting: https://shahboura.github.io/agents-claude/troubleshooting
+- Skills Matrix: https://shahboura.github.io/agents-claude/skills-matrix
+
+## Project Metadata
+- Author: Shehab ElHadidy
+- License: MIT
+- NPM: https://www.npmjs.com/package/@shahboura/agents-claude

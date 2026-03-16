@@ -3,9 +3,11 @@ name: rust
 description: Rust best practices with ownership, error handling, and performance.
 ---
 
-- Lint with `cargo clippy -- -D warnings`; format with `cargo fmt`; check with `cargo check`.
-- Run tests with `cargo test`; use `#[cfg(test)]` modules for unit tests, `tests/` for integration.
-- Use `Result<T, E>` and `Option<T>` consistently; avoid `.unwrap()` outside tests.
-- Define domain errors with `thiserror`; propagate with `?`; wrap external errors.
-- Prefer owned types in public APIs; use lifetimes only when shared references give clear benefit.
-- Use `derive` macros (`Debug`, `Clone`, `PartialEq`) liberally; avoid manual impls unless needed.
+- Run `cargo fmt`, `cargo clippy -- -D warnings`, and `cargo check` before finalizing changes.
+- Use `Result<T, E>`/`Option<T>` consistently; avoid `.unwrap()` and `.expect()` outside tests.
+- Define domain errors with `thiserror`; propagate with `?` and preserve actionable context.
+- Prefer borrowing where clear, but optimize for API ergonomics over lifetime cleverness.
+- Keep allocation and cloning explicit in hot paths; benchmark before micro-optimizing.
+- Separate unit tests (`#[cfg(test)]`) and integration tests (`tests/`) with meaningful coverage.
+- Use newtypes/enums for domain safety instead of primitive obsession.
+- Gate unsafe code with documented invariants and minimal scope.

@@ -1,0 +1,41 @@
+# Claude Agents Pack — Full LLM Index
+
+Canonical docs site: https://shahboura.github.io/agents-claude/
+Repository: https://github.com/shahboura/agents-claude
+Author: Shehab ElHadidy
+License: MIT
+
+## Primary Pages
+- Home: https://shahboura.github.io/agents-claude/
+- Getting Started: https://shahboura.github.io/agents-claude/getting-started
+- Agents: https://shahboura.github.io/agents-claude/agents/README
+- Commands & Skills: https://shahboura.github.io/agents-claude/commands
+- Instructions: https://shahboura.github.io/agents-claude/instructions
+- Customization: https://shahboura.github.io/agents-claude/customization
+- Troubleshooting: https://shahboura.github.io/agents-claude/troubleshooting
+- Skills Matrix: https://shahboura.github.io/agents-claude/skills-matrix
+
+## Install / Package
+- NPM: https://www.npmjs.com/package/@shahboura/agents-claude
+- GitHub Releases: https://github.com/shahboura/agents-claude/releases
+
+## Agent Inventory
+- @codebase
+- @orchestrator
+- @planner
+- @review
+- @docs
+- @em-advisor
+- @blogger
+- @brutal-critic
+
+## Skill Categories
+- Language skills: dotnet, python, typescript, flutter, go, java-spring, node-express, react-next, ruby-rails, rust, sql-migrations
+- Utility skills: project-bootstrap, agent-diagnostics, docs-validation, ux-responsive
+- Content skills: blogger, brutal-critic
+- Command-style workflow skills: api-docs, architecture-decision, architecture-review, blog-post, code-review, content-review, create-readme, generate-tests, plan-project, refactor-plan, security-audit, 1-on-1-prep
+
+## Quick Facts
+- Skills are loaded on demand.
+- Keep one primary skill per phase unless cross-domain work is needed.
+- Installer supports global/project scopes with safe settings merge and manifest-backed uninstall.

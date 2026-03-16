@@ -16,10 +16,10 @@ Quick read:
 
 | Agent | Allowed skills |
 |---|---|
-| `codebase` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations` |
-| `orchestrator` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations`, `project-bootstrap`, `docs-validation`, `agent-diagnostics`, `blogger`, `brutal-critic` |
-| `planner` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations`, `project-bootstrap`, `docs-validation`, `agent-diagnostics` |
-| `review` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations`, `docs-validation`, `agent-diagnostics` |
+| `codebase` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ux-responsive`, `ruby-rails`, `rust`, `sql-migrations` |
+| `orchestrator` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ux-responsive`, `ruby-rails`, `rust`, `sql-migrations`, `project-bootstrap`, `docs-validation`, `agent-diagnostics`, `blogger`, `brutal-critic` |
+| `planner` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ux-responsive`, `ruby-rails`, `rust`, `sql-migrations`, `project-bootstrap`, `docs-validation`, `agent-diagnostics` |
+| `review` | `dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ux-responsive`, `ruby-rails`, `rust`, `sql-migrations`, `docs-validation`, `agent-diagnostics` |
 | `docs` | `docs-validation`, `project-bootstrap`, `agent-diagnostics` |
 | `em-advisor` | `project-bootstrap`, `agent-diagnostics`, `docs-validation` |
 | `blogger` | `blogger`, `brutal-critic` |
@@ -30,6 +30,25 @@ Quick read:
 - Skills load on demand to reduce context overhead.
 - Keep skill usage narrow by role to reduce tool/context noise.
 - Avoid preloading many skills in subagents unless explicitly needed.
+
+## Skill Trigger Guide (Canonical)
+
+Use this as the canonical trigger reference for when agents should load skills.
+
+| Task intent | Skill to load | Typical agents |
+|---|---|---|
+| Language/framework implementation or review | Matching stack skill (`dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations`) | `codebase`, `review`, `planner`, `orchestrator` |
+| Responsive UX across phone/tablet/desktop | `ux-responsive` | `codebase`, `review`, `planner`, `orchestrator` |
+| Docs quality checks (lint/link/structure) | `docs-validation` | `docs`, `review`, `orchestrator` |
+| Agent/package diagnostics and configuration checks | `agent-diagnostics` | `docs`, `review`, `planner`, `orchestrator`, `em-advisor` |
+| Project bootstrap scaffolding | `project-bootstrap` | `docs`, `planner`, `orchestrator`, `em-advisor` |
+| Content drafting | `blogger` | `blogger`, `orchestrator` |
+| Content critique and scoring | `brutal-critic` | `brutal-critic`, `blogger`, `orchestrator` |
+
+Trigger policy:
+- Load skills only on demand for the active task/phase.
+- Start with one relevant skill; add a second only for explicit cross-domain needs.
+- If stack/domain is ambiguous, ask a clarifying question before loading.
 
 ## Skill Scope Policy (Current)
 

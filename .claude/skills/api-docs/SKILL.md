@@ -3,8 +3,7 @@ name: api-docs
 description: Generate API documentation from existing code.
 argument-hint: "[module, file, or endpoint path]"
 disable-model-invocation: true
-context: fork
-agent: docs
+user-invocable: true
 ---
 
 Generate API docs for: $ARGUMENTS

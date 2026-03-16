@@ -3,8 +3,7 @@ name: generate-tests
 description: Generate targeted tests for uncovered or risky behavior.
 argument-hint: "[file, class, or function name]"
 disable-model-invocation: true
-context: fork
-agent: codebase
+user-invocable: true
 ---
 
 Generate tests for: $ARGUMENTS

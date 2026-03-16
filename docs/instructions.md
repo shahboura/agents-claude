@@ -35,6 +35,7 @@ Use least-privilege tool access in `.claude/agents/*.md`.
 | Java | Spring Boot DI, validation, records |
 | Node.js | Security middleware, validation, structured logs |
 | React | Accessibility, performance, hooks |
+| UX Responsive | Breakpoints, reflow, touch/pointer and keyboard accessibility |
 | Ruby | MVC, ActiveRecord, RSpec |
 | Rust | Ownership, Result/Option, clippy |
 | CI/CD | Fail-fast gates, security, caching |

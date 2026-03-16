@@ -2,6 +2,7 @@
 name: brutal-critic
 description: Framework-based content criticism and scoring.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 ## Review framework

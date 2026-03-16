@@ -3,8 +3,7 @@ name: architecture-decision
 description: Create an architecture decision record (ADR).
 argument-hint: "[decision topic or system name]"
 disable-model-invocation: true
-context: fork
-agent: docs
+user-invocable: true
 ---
 
 Create an ADR for: $ARGUMENTS

@@ -1,6 +1,7 @@
 ---
 name: blogger
 description: Concise content creation for tech, finance, and leadership blogging.
+user-invocable: false
 ---
 
 ## What I do

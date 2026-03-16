@@ -13,7 +13,7 @@ This repository contains customized agents and skills for Claude Code.
 ## Language & Domain Skills
 
 Language-specific rules are loaded on-demand via skills (not eagerly). Available skills:
-`dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ruby-rails`, `rust`, `sql-migrations`, `blogger`, `brutal-critic`
+`dotnet`, `python`, `typescript`, `flutter`, `go`, `java-spring`, `node-express`, `react-next`, `ux-responsive`, `ruby-rails`, `rust`, `sql-migrations`, `blogger`, `brutal-critic`
 
 Utility skills: `project-bootstrap`, `docs-validation`, `agent-diagnostics`
 
@@ -71,6 +71,15 @@ All documentation changes must:
 <!-- Session history managed by project conventions. Only significant milestones logged here. Auto-prunes at 100KB. -->
 
 ## Milestones
+
+### 2026-03-17 01:34 - Installer safety hardening and detection precision
+
+**Agent:** orchestrator
+**Summary:** Coordinated a safety-focused follow-up across installer detection, uninstall guards, and regression coverage.
+- Hardened uninstall path handling with managed-path validation and realpath containment checks to prevent traversal/symlink escape from tampered manifests.
+- Tightened legacy install detection to reduce false positives in source repositories and require stronger legacy signatures before cleanup.
+- Added focused installer regression tests for traversal (`../`), absolute-path, symlink-escape, legacy-detection strictness, and version-marker-only uninstall behavior.
+- Completed review-first loop (implement → review → harden → re-review) and aligned troubleshooting docs with marker-only cleanup behavior.
 
 ### 2026-03-12 09:24 - Repo bootstrap, release prep, and publishing guidance
 

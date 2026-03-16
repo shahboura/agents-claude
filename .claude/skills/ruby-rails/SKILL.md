@@ -3,9 +3,11 @@ name: ruby-rails
 description: Ruby on Rails best practices with MVC, ActiveRecord, and testing.
 ---
 
-- Lint with `rubocop`; run `bundle exec rubocop -A` to auto-fix offenses; enforce in CI with `--no-autocorrect` flag.
-- Run tests with `rspec`; use `FactoryBot` for fixtures and `shoulda-matchers` for model/controller assertions.
-- Keep controllers thin: extract business logic to service objects (`app/services/`) or POROs; controllers only parse params, call a service, and render.
-- Discipline ActiveRecord callbacks: avoid `after_save` / `before_destroy` for side-effects (email, notifications) — use service objects or jobs instead.
-- Use `Strong Parameters` in controllers; validate at the model layer; never trust user input in raw SQL — always use parameterized queries or Arel.
-- Scope background jobs to `app/jobs/`; use `perform_later` for everything that doesn't need to block the request cycle.
+- Lint with `bundle exec rubocop`; auto-fix locally with `-A` and keep CI on non-autocorrect mode.
+- Run tests with `bundle exec rspec`; use `FactoryBot` and focused request/model specs.
+- Keep controllers thin: parse params, authorize, delegate to services, render response.
+- Prefer service objects and jobs for side-effects; avoid callback-heavy business logic.
+- Use Strong Parameters and model validations; never interpolate raw user input into SQL.
+- Keep domain logic out of views/helpers; use presenters/decorators when view composition grows.
+- Use idempotent background jobs and retry-safe external integrations.
+- Protect N+1 hot paths with eager loading and query-level assertions in specs.

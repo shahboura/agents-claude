@@ -3,8 +3,7 @@ name: create-readme
 description: Generate or improve project README.
 argument-hint: "[project name or path]"
 disable-model-invocation: true
-context: fork
-agent: docs
+user-invocable: true
 ---
 
 Create or improve README for: $ARGUMENTS

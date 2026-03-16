@@ -2,8 +2,7 @@
 name: blog-post
 description: Create a concise blog draft with source-backed claims.
 disable-model-invocation: true
-context: fork
-agent: blogger
+user-invocable: true
 argument-hint: "[topic]"
 ---
 

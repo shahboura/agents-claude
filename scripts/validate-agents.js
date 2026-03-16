@@ -107,15 +107,16 @@ function validateSkills(root, errors, warnings) {
     return;
   }
 
-  // Hoist agent resolution outside the loop — computed once, reused per skill
-  const agentsDir = path.join(root, '.claude', 'agents');
-  const knownAgents = new Set(
-    fs.existsSync(agentsDir)
-      ? fs.readdirSync(agentsDir)
-          .filter(f => f.endsWith('.md'))
-          .map(f => path.basename(f, '.md'))
-      : []
-  );
+  const supportedSkillFields = new Set([
+    'name',
+    'description',
+    'argument-hint',
+    'compatibility',
+    'disable-model-invocation',
+    'license',
+    'metadata',
+    'user-invocable',
+  ]);
 
   for (const folder of skillFolders) {
     const skillFile = path.join(skillsDir, folder.name, 'SKILL.md');
@@ -138,24 +139,31 @@ function validateSkills(root, errors, warnings) {
       warnings.push(`.claude/skills/${folder.name}/SKILL.md: missing 'description' field`);
     }
 
-    // Check: command skills (context: fork) must declare a known agent
-    if (parseField(fm, 'context') === 'fork') {
-      const agent = parseField(fm, 'agent');
-      if (!agent) {
-        errors.push(`.claude/skills/${folder.name}/SKILL.md: command skill (context: fork) is missing required 'agent:' field`);
-      } else if (!knownAgents.has(agent)) {
-        errors.push(`.claude/skills/${folder.name}/SKILL.md: command skill references unknown agent '${agent}' (known: ${[...knownAgents].join(', ')})`);
-      }
-
-      if (!hasField(fm, 'argument-hint')) {
-        warnings.push(`.claude/skills/${folder.name}/SKILL.md: command skill (context: fork) is missing 'argument-hint' field`);
-      }
+    const fmLines = fm
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l && !l.startsWith('#') && l.includes(':'));
+    const fields = fmLines.map(l => l.split(':', 1)[0].trim());
+    const unsupported = [...new Set(fields.filter(field => !supportedSkillFields.has(field)))];
+    if (unsupported.length > 0) {
+      errors.push(
+        `.claude/skills/${folder.name}/SKILL.md: unsupported field(s): ${unsupported.join(', ')}. Supported fields: ${[...supportedSkillFields].join(', ')}`
+      );
     }
 
     // Check: skills using $ARGUMENTS should have argument-hint
     const body = getBody(content);
     if (body.includes('$ARGUMENTS') && !hasField(fm, 'argument-hint')) {
       warnings.push(`.claude/skills/${folder.name}/SKILL.md: uses $ARGUMENTS but is missing 'argument-hint' field`);
+    }
+
+    const disableModelInvocation = parseField(fm, 'disable-model-invocation');
+    const userInvocable = parseField(fm, 'user-invocable');
+    if (disableModelInvocation === 'true' && !hasField(fm, 'user-invocable')) {
+      warnings.push(`.claude/skills/${folder.name}/SKILL.md: disable-model-invocation is true; set 'user-invocable' explicitly for clarity`);
+    }
+    if (disableModelInvocation === 'true' && userInvocable === 'false' && body.includes('$ARGUMENTS')) {
+      warnings.push(`.claude/skills/${folder.name}/SKILL.md: uses $ARGUMENTS but is not user-invocable; confirm this is intentional`);
     }
 
     // Check: Pattern A skills (no disable-model-invocation) should have a non-trivial body
