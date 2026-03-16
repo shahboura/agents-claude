@@ -31,6 +31,15 @@ Quick jump: [Agents](agents/README) · [Skills Matrix](skills-matrix) · [Comman
 
 `agents-claude` is for install/update/uninstall; day-to-day use runs in `claude`.
 
+Install safety notes:
+- If status shows `installed (version-marker)`, uninstall removes marker files only.
+  Run `--update` first, then uninstall for full managed-file cleanup.
+- If manifest trust checks fail, uninstall removes only manifest/version markers
+  and skips broad file deletion for safety.
+- Installer blocks writes to symlink destinations for managed files.
+- Installer uses an internal managed marker so only installer-managed
+  `CLAUDE.md` is eligible for removal on uninstall.
+
 1. Install:
 
    ```bash

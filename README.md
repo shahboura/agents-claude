@@ -65,6 +65,10 @@ Uninstall behavior:
 - `npx @shahboura/agents-claude --uninstall` targets the **current project** by default.
 - Use `--global` or `--all` for explicit scope control.
 - Uninstall removes installer-managed files via install manifest tracking.
+- If status shows `installed (version-marker)`, uninstall removes marker files only.
+  Run `--update` first, then uninstall for full managed-file cleanup.
+- If manifest trust checks fail, uninstall removes only manifest/version markers
+  and skips broad file deletion for safety.
 - Project backups: `<project>/.claude/.backups/<timestamp>--<operation>--<scope>/`
 - Global backups: `~/.claude/.backups/<timestamp>--<operation>--<scope>/`
 - Backup retention: latest 10 sessions and sessions newer than 30 days.
@@ -82,6 +86,12 @@ Settings behavior:
 - Installer merges only missing safe defaults in `.claude/settings.json`.
 - Existing permissions, sandbox, and hooks are preserved and never overwritten.
 - If `CLAUDE.md` already exists before install, installer leaves it unmanaged and will not remove it on uninstall.
+- Installer uses an internal managed marker so only installer-managed `CLAUDE.md`
+  is eligible for removal on uninstall.
+
+Install safety behavior:
+- Installer blocks writes to symlink destinations for managed files.
+- Replace managed-path symlinks with regular files/paths before re-running install.
 
 Scope behavior:
 - `--global` targets `~/.claude` only.
