@@ -159,6 +159,35 @@ function testVersionMarkerDetection(tmpRoot) {
   assert(status.includes('Global (~/.claude): installed (version-marker)'), 'Global status should detect version-marker fallback');
 }
 
+function testSourceRepoDoesNotTriggerLegacyDetection(tmpRoot) {
+  const homeDir = path.join(tmpRoot, 'source-home');
+  const projectDir = path.join(tmpRoot, 'source-repo');
+  createDir(homeDir);
+  createDir(projectDir);
+
+  const env = {
+    HOME: homeDir,
+    USERPROFILE: homeDir,
+  };
+
+  writeJson(path.join(projectDir, 'package.json'), {
+    name: 'agents-claude',
+    version: '0.0.0-test',
+  });
+
+  fs.writeFileSync(path.join(projectDir, 'install.js'), '// source installer entrypoint\n');
+
+  createDir(path.join(projectDir, '.claude', 'agents'));
+  createDir(path.join(projectDir, '.claude', 'skills'));
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'codebase.md'), '# codebase\n');
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'orchestrator.md'), '# orchestrator\n');
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'review.md'), '# review\n');
+
+  const status = runInstaller(['--status'], { cwd: projectDir, env });
+  assert(status.includes('Project ('), 'Status should include project line for source repo check');
+  assert(status.includes('): not installed'), 'Source repository signature should not be treated as legacy install');
+}
+
 function testSettingsMergePreservesUserData(tmpRoot) {
   const projectDir = path.join(tmpRoot, 'settings-merge');
   createDir(projectDir);
@@ -236,6 +265,7 @@ function main() {
     testGlobalAndProjectLifecycle(tmpRoot);
     testStatusDetectionUsesManifestAndVersion(tmpRoot);
     testVersionMarkerDetection(tmpRoot);
+    testSourceRepoDoesNotTriggerLegacyDetection(tmpRoot);
 
     console.log('✅ Installer lifecycle tests passed');
   } catch (err) {

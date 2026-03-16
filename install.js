@@ -1044,6 +1044,14 @@ function uninstallScope(options) {
       touchedDirectories.add(path.dirname(paths.manifestPath));
     }
   } else {
+    const detectedState = detectInstallState(scope, projectDir, sourceSettings);
+    if (!(detectedState.installed && detectedState.reason === 'legacy-signature')) {
+      warning(
+        `No install manifest found for ${scope}, and no trusted legacy installer signature was detected. Skipping legacy cleanup.`
+      );
+      return true;
+    }
+
     warning(`No install manifest found for ${scope}. Attempting safe legacy cleanup.`);
 
     const legacyManagedFiles = sourceManagedFiles.map(relative => toManagedPath(scope, relative));
