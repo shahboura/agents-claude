@@ -37,11 +37,4 @@ color_scheme: dark
 mermaid:
   version: "11.13.0"
 
-# Footer
-footer_content: >-
-  <nav class="footer-action-links" aria-label="External links">
-    <a class="footer-action-link" href="https://github.com/shahboura/agents-claude" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-    <a class="footer-action-link" href="https://www.npmjs.com/package/@shahboura/agents-claude" target="_blank" rel="noopener noreferrer">npm</a>
-    <a class="footer-action-link" href="https://www.linkedin.com/in/shehabelhadidy/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-  </nav>
-  Copyright &copy; 2025-2026 Shehab ElHadidy. Licensed under the MIT License.
+# Footer: rendered via _includes/footer_custom.html

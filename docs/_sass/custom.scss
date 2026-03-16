@@ -2,7 +2,6 @@
 ---
 
 // Custom SCSS for Claude Agents documentation
-// This file will be processed by Jekyll and included in the theme
 
 /* Code block improvements */
 .highlight {
@@ -41,40 +40,119 @@ table th {
   padding-top: 1rem;
 }
 
-/* Footer social icons (above Just the Docs line) */
-.site-footer .footer-action-links {
+/* Footer custom – horizontal pill links (rendered via _includes/footer_custom.html) */
+footer .footer-links {
   display: flex;
-  flex-wrap: nowrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.15rem;
 }
 
-.site-footer .footer-action-link {
+footer .footer-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 1.7rem;
-  padding: 0 0.65rem;
+  gap: 0.3rem;
+  height: 1.6rem;
+  padding: 0 0.6rem;
   border: 1px solid var(--border-color, #4b5563);
   border-radius: 9999px;
   background: transparent;
   color: var(--body-text-color, #d1d5db);
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   line-height: 1;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
 }
 
-.site-footer .footer-action-link:hover,
-.site-footer .footer-action-link:focus-visible {
+footer .footer-link svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+footer .footer-link:hover,
+footer .footer-link:focus-visible {
   border-color: var(--link-color, #58a6ff);
   color: var(--link-color, #58a6ff);
 }
 
-/* Mermaid readability + horizontal scroll for zoom-like behavior */
+footer .footer-link:hover svg,
+footer .footer-link:focus-visible svg {
+  opacity: 1;
+}
+
+footer .footer-copyright {
+  margin: 0.25rem 0 0;
+  font-size: 0.65rem;
+  color: var(--body-text-color, #9ca3af);
+  opacity: 0.7;
+}
+
+/* Mermaid pan/zoom container */
+.mermaid-zoom-wrap {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #444);
+  border-radius: 6px;
+  margin: 1rem 0;
+  background: var(--table-header-bg, #1c2128);
+  cursor: grab;
+}
+
+.mermaid-zoom-wrap:active {
+  cursor: grabbing;
+}
+
+.mermaid-zoom-controls {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  display: flex;
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+.mermaid-zoom-controls button {
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 1px solid var(--border-color, #4b5563);
+  border-radius: 4px;
+  background: var(--body-background-color, #22272e);
+  color: var(--body-text-color, #d1d5db);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+.mermaid-zoom-controls button:hover {
+  opacity: 1;
+  border-color: var(--link-color, #58a6ff);
+}
+
+.mermaid-zoom-inner {
+  transform-origin: 0 0;
+  transition: none;
+  min-height: 200px;
+}
+
+/* Ensure mermaid SVG renders cleanly inside zoom container */
+.mermaid-zoom-inner svg {
+  max-width: none;
+  display: block;
+}
+
+.mermaid-zoom-inner text {
+  font-size: 15px;
+}
+
+/* Fallback: keep raw mermaid code blocks scrollable if JS doesn't load */
 .main-content .language-mermaid {
   overflow-x: auto;
   padding-bottom: 0.25rem;
@@ -88,7 +166,7 @@ table th {
   font-size: 15px;
 }
 
-/* Responsive design improvements */
+/* Responsive */
 @media (max-width: 768px) {
   .main-content {
     padding: 1rem;
