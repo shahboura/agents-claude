@@ -41,6 +41,8 @@ See exact allowlists in the [Skills Matrix](../skills-matrix).
 
 ## Agent ↔ Skill Relationship (Quick Diagram)
 
+> Tip: if labels look small, scroll horizontally in the diagram container.
+
 ```mermaid
 flowchart TD
     U["User Request in Claude"] --> O["orchestrator"]
