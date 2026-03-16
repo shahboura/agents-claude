@@ -19,6 +19,7 @@ const { detectInstallState: detectInstallStateCore } = require('./scripts/instal
 const PACKAGE_NAME = 'agents-claude';
 const MANIFEST_FILE = '.agents-claude-manifest.json';
 const VERSION_FILE = '.claude-agents-version';
+const CLAUDE_MD_MARKER_FILE = '.agents-claude-managed-claude-md';
 const BACKUP_DIR = '.backups';
 
 const colors = {
@@ -346,6 +347,7 @@ function getScopePaths(scope, projectDir) {
       versionPath: path.join(rootDir, VERSION_FILE),
       settingsPath: path.join(rootDir, 'settings.json'),
       claudeMdPath: null,
+      claudeMdMarkerPath: null,
     };
   }
 
@@ -358,6 +360,7 @@ function getScopePaths(scope, projectDir) {
     versionPath: path.join(resolvedProjectDir, VERSION_FILE),
     settingsPath: path.join(resolvedProjectDir, '.claude', 'settings.json'),
     claudeMdPath: path.join(resolvedProjectDir, 'CLAUDE.md'),
+    claudeMdMarkerPath: path.join(resolvedProjectDir, '.claude', CLAUDE_MD_MARKER_FILE),
   };
 }
 
@@ -368,6 +371,59 @@ function toManagedPath(scope, relativeClaudeFile) {
   return path.join('.claude', relativeClaudeFile);
 }
 
+function normalizeManagedPath(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const normalized = path.normalize(value.trim());
+  if (!normalized || normalized === '.') {
+    return null;
+  }
+
+  return normalized;
+}
+
+function buildAllowedManagedPathSet(scope, sourceManagedFiles, paths) {
+  const allowed = new Set();
+  for (const relativeFile of sourceManagedFiles) {
+    const managedPath = normalizeManagedPath(toManagedPath(scope, relativeFile));
+    if (managedPath) {
+      allowed.add(managedPath);
+    }
+  }
+
+  if (scope === 'project' && paths && paths.claudeMdMarkerPath && fs.existsSync(paths.claudeMdMarkerPath)) {
+    allowed.add('CLAUDE.md');
+  }
+
+  return allowed;
+}
+
+function manifestLooksTrusted(manifest, scope, rootDir) {
+  if (!manifest || !isObject(manifest)) {
+    return false;
+  }
+
+  if (!Array.isArray(manifest.managedFiles)) {
+    return false;
+  }
+
+  if (manifest.package !== PACKAGE_NAME) {
+    return false;
+  }
+
+  if (manifest.scope !== scope) {
+    return false;
+  }
+
+  if (typeof manifest.rootDir !== 'string') {
+    return false;
+  }
+
+  return path.resolve(manifest.rootDir) === path.resolve(rootDir);
+}
+
 function isPathWithinRoot(rootDir, targetPath) {
   const resolvedRoot = path.resolve(rootDir);
   const resolvedTarget = path.resolve(targetPath);
@@ -375,12 +431,8 @@ function isPathWithinRoot(rootDir, targetPath) {
 }
 
 function resolveManagedPathWithinRoot(rootDir, managedPath) {
-  if (typeof managedPath !== 'string') {
-    return null;
-  }
-
-  const normalizedPath = path.normalize(managedPath.trim());
-  if (!normalizedPath || normalizedPath === '.' || path.isAbsolute(normalizedPath)) {
+  const normalizedPath = normalizeManagedPath(managedPath);
+  if (!normalizedPath || path.isAbsolute(normalizedPath)) {
     return null;
   }
 
@@ -415,6 +467,30 @@ function resolveManagedFileForUninstall(rootDir, managedPath) {
   };
 }
 
+function writeClaudeMdManagedMarker(markerPath) {
+  if (!markerPath) {
+    return;
+  }
+  ensureDir(path.dirname(markerPath));
+  fs.writeFileSync(markerPath, 'managed\n');
+}
+
+function validateDestinationWritePath(destPath, allowedRootPath) {
+  const realAllowedRoot = fs.realpathSync(allowedRootPath);
+  const realDestinationParent = fs.realpathSync(path.dirname(destPath));
+
+  if (!isPathWithinRoot(realAllowedRoot, realDestinationParent)) {
+    throw new Error(`Refusing to write outside managed scope: ${destPath}`);
+  }
+
+  if (fs.existsSync(destPath)) {
+    const stat = fs.lstatSync(destPath);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Refusing to overwrite symlink destination: ${destPath}`);
+    }
+  }
+}
+
 function installManagedTree(sourceClaudeDir, sourceFiles, destinationClaudeDir, scope, backupSession) {
   ensureDir(destinationClaudeDir);
 
@@ -426,6 +502,8 @@ function installManagedTree(sourceClaudeDir, sourceFiles, destinationClaudeDir, 
     const src = path.join(sourceClaudeDir, relativeFile);
     const dest = path.join(destinationClaudeDir, relativeFile);
     ensureDir(path.dirname(dest));
+
+    validateDestinationWritePath(dest, destinationClaudeDir);
 
     if (fs.existsSync(dest)) {
       if (filesEqual(src, dest)) {
@@ -976,10 +1054,13 @@ function installScope(options) {
     );
 
     if (!fs.existsSync(paths.claudeMdPath) && fs.existsSync(sourceClaudeMd)) {
+      validateDestinationWritePath(paths.claudeMdPath, paths.rootDir);
       fs.copyFileSync(sourceClaudeMd, paths.claudeMdPath);
       success('✓ Installed CLAUDE.md');
+      writeClaudeMdManagedMarker(paths.claudeMdMarkerPath);
       managedFiles.push('CLAUDE.md');
     } else if (hadManagedClaudeMd && fs.existsSync(paths.claudeMdPath)) {
+      writeClaudeMdManagedMarker(paths.claudeMdMarkerPath);
       managedFiles.push('CLAUDE.md');
     }
   }
@@ -1075,11 +1156,19 @@ function uninstallScope(options) {
     touchedDirectories.add(path.dirname(resolvedFile.absolutePath));
   };
 
-  if (manifest && Array.isArray(manifest.managedFiles)) {
+  if (manifestLooksTrusted(manifest, scope, paths.rootDir)) {
     info(`Using manifest uninstall for ${scope} scope.`);
 
+    const allowedManagedPaths = buildAllowedManagedPathSet(scope, sourceManagedFiles, paths);
+
     for (const managedPath of manifest.managedFiles) {
-      removeManagedFile(managedPath);
+      const normalizedManagedPath = normalizeManagedPath(managedPath);
+      if (!normalizedManagedPath || !allowedManagedPaths.has(normalizedManagedPath)) {
+        warning(`Skipping unrecognized manifest managed path during uninstall: ${managedPath}`);
+        continue;
+      }
+
+      removeManagedFile(normalizedManagedPath);
     }
 
     const revertResult = revertInstallerSettings(paths.settingsPath, manifest.settingsPatch, sourceSettings, backupSettingsBeforeMutate);
@@ -1099,6 +1188,41 @@ function uninstallScope(options) {
       removedFiles += 1;
       touchedDirectories.add(path.dirname(paths.manifestPath));
     }
+    if (scope === 'project' && paths.claudeMdMarkerPath && fs.existsSync(paths.claudeMdMarkerPath)) {
+      backupSession.backupFile(paths.claudeMdMarkerPath, path.relative(paths.rootDir, paths.claudeMdMarkerPath));
+      if (removeIfExists(paths.claudeMdMarkerPath)) {
+        removedFiles += 1;
+        touchedDirectories.add(path.dirname(paths.claudeMdMarkerPath));
+      }
+    }
+  } else if (manifest) {
+    warning(`Install manifest at ${paths.manifestPath} failed trust checks; skipping manifest-driven file cleanup.`);
+
+    if (fs.existsSync(paths.manifestPath)) {
+      backupSession.backupFile(paths.manifestPath, path.relative(paths.rootDir, paths.manifestPath));
+    }
+    if (removeIfExists(paths.manifestPath)) {
+      removedFiles += 1;
+      touchedDirectories.add(path.dirname(paths.manifestPath));
+    }
+
+    if (fs.existsSync(paths.versionPath)) {
+      backupSession.backupFile(paths.versionPath, path.relative(paths.rootDir, paths.versionPath));
+    }
+    if (removeIfExists(paths.versionPath)) {
+      removedFiles += 1;
+      touchedDirectories.add(path.dirname(paths.versionPath));
+    }
+
+    if (scope === 'project' && paths.claudeMdMarkerPath && fs.existsSync(paths.claudeMdMarkerPath)) {
+      backupSession.backupFile(paths.claudeMdMarkerPath, path.relative(paths.rootDir, paths.claudeMdMarkerPath));
+      if (removeIfExists(paths.claudeMdMarkerPath)) {
+        removedFiles += 1;
+        touchedDirectories.add(path.dirname(paths.claudeMdMarkerPath));
+      }
+    }
+
+    warning('Removed untrusted manifest/version markers only; rerun --update before uninstall for full managed cleanup.');
   } else {
     const detectedState = detectInstallState(scope, projectDir, sourceSettings);
 

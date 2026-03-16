@@ -55,6 +55,13 @@ description: Common issues and solutions for Claude agent/skill configurations.
 - Use `npx @shahboura/agents-claude --uninstall --all` to remove both global and project scopes
 - If global is still installed, Claude Code may continue loading global agents/settings
 - If status shows `installed (version-marker)`, uninstall removes the marker safely; run `--update` first to recreate a manifest, then uninstall for full managed-file cleanup
+- If uninstall says manifest trust checks failed, installer removes only manifest/version markers and skips broad file deletion for safety
+
+### Install fails with symlink destination warning
+
+- Installer now blocks writing managed files to symlink destinations (safety hardening)
+- Replace the symlink with a regular file/path under the managed scope and rerun install
+- This prevents accidental writes outside the intended `.claude` or project root scope
 
 ### How do I restore from installer backups?
 
@@ -75,6 +82,7 @@ description: Common issues and solutions for Claude agent/skill configurations.
 - Installer only removes `CLAUDE.md` when it created/managed it in manifest mode.
 - If your `CLAUDE.md` existed before install, uninstall should leave it untouched.
 - If removal happened in older versions, restore from backup session using `backup-manifest.json`.
+- Installer now uses an internal managed marker to distinguish installer-owned `CLAUDE.md` from preexisting user-owned files.
 
 ### Skills not loading
 

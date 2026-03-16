@@ -15,6 +15,19 @@ function assert(condition, message) {
   }
 }
 
+function assertThrows(fn, message) {
+  let threw = false;
+  try {
+    fn();
+  } catch {
+    threw = true;
+  }
+
+  if (!threw) {
+    throw new Error(message);
+  }
+}
+
 function runInstaller(args, options = {}) {
   return execFileSync('node', [installScript, ...args], {
     cwd: options.cwd || repoRoot,
@@ -69,13 +82,16 @@ function testProjectInstallAndUninstall(tmpRoot) {
   runInstaller(['--project', '.'], { cwd: projectDir });
 
   const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const claudeMdMarkerPath = path.join(projectDir, '.claude', '.agents-claude-managed-claude-md');
   assert(fs.existsSync(manifestPath), 'Project manifest should exist after install');
   assert(fs.existsSync(path.join(projectDir, 'CLAUDE.md')), 'CLAUDE.md should be installed for project scope');
+  assert(fs.existsSync(claudeMdMarkerPath), 'CLAUDE.md managed marker should exist when installer manages CLAUDE.md');
 
   runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
 
   assert(!fs.existsSync(manifestPath), 'Project manifest should be removed after uninstall');
   assert(!fs.existsSync(path.join(projectDir, 'CLAUDE.md')), 'CLAUDE.md should be removed on manifest uninstall');
+  assert(!fs.existsSync(claudeMdMarkerPath), 'CLAUDE.md managed marker should be removed on uninstall');
 
   const sessions = listProjectBackupSessions(projectDir);
   assert(sessions.length >= 1, 'Backup session should be created on real uninstall');
@@ -326,6 +342,68 @@ function testTamperedManifestSymlinkEscapeIsIgnored(tmpRoot) {
   assert(fs.existsSync(escapedFile), 'Tampered manifest symlink escape must not delete files outside root');
 }
 
+function testTamperedManifestInRootPathIsIgnored(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'tampered-in-root-manifest');
+  createDir(projectDir);
+
+  const readmePath = path.join(projectDir, 'README.md');
+  fs.writeFileSync(readmePath, 'do-not-delete-in-root\n');
+
+  runInstaller(['--project', '.'], { cwd: projectDir });
+
+  const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const manifest = readJson(manifestPath);
+  manifest.managedFiles = ['README.md'];
+  writeJson(manifestPath, manifest);
+
+  runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
+  assert(fs.existsSync(readmePath), 'Tampered manifest in-root path must not delete non-managed project files');
+}
+
+function testTamperedManifestCannotDeleteUnmanagedClaudeMd(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'tampered-unmanaged-claude-md');
+  createDir(projectDir);
+
+  const claudeMdPath = path.join(projectDir, 'CLAUDE.md');
+  fs.writeFileSync(claudeMdPath, 'user-owned-claude-md\n');
+
+  runInstaller(['--project', '.'], { cwd: projectDir });
+
+  const markerPath = path.join(projectDir, '.claude', '.agents-claude-managed-claude-md');
+  assert(!fs.existsSync(markerPath), 'Marker should not exist when CLAUDE.md was preexisting and unmanaged');
+
+  const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const manifest = readJson(manifestPath);
+  manifest.managedFiles = ['CLAUDE.md'];
+  writeJson(manifestPath, manifest);
+
+  runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
+  assert(fs.existsSync(claudeMdPath), 'Tampered manifest must not delete unmanaged preexisting CLAUDE.md');
+}
+
+function testInstallFailsOnSymlinkDestination(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'symlink-destination-install');
+  const outsideDir = path.join(tmpRoot, 'symlink-destination-outside');
+  createDir(projectDir);
+  createDir(outsideDir);
+
+  const outsideFile = path.join(outsideDir, 'outside-agent.md');
+  fs.writeFileSync(outsideFile, 'outside-original\n');
+
+  createDir(path.join(projectDir, '.claude', 'agents'));
+  fs.symlinkSync(outsideFile, path.join(projectDir, '.claude', 'agents', 'codebase.md'));
+
+  assertThrows(
+    () => runInstaller(['--project', '.'], { cwd: projectDir }),
+    'Install should fail when destination managed file is a symlink'
+  );
+
+  assert(
+    fs.readFileSync(outsideFile, 'utf8') === 'outside-original\n',
+    'Install should not overwrite symlink target outside managed root'
+  );
+}
+
 function testSettingsMergePreservesUserData(tmpRoot) {
   const projectDir = path.join(tmpRoot, 'settings-merge');
   createDir(projectDir);
@@ -410,6 +488,9 @@ function main() {
     testTamperedManifestPathTraversalIsIgnored(tmpRoot);
     testTamperedManifestAbsolutePathIsIgnored(tmpRoot);
     testTamperedManifestSymlinkEscapeIsIgnored(tmpRoot);
+    testTamperedManifestInRootPathIsIgnored(tmpRoot);
+    testTamperedManifestCannotDeleteUnmanagedClaudeMd(tmpRoot);
+    testInstallFailsOnSymlinkDestination(tmpRoot);
 
     console.log('✅ Installer lifecycle tests passed');
   } catch (err) {
