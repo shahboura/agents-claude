@@ -114,7 +114,7 @@ function hasLegacyManagedInstall(paths, sourceSettings) {
     return false;
   }
 
-  return hasManagedAgentSignature(paths.claudeDir) || settingsLooksManaged(paths.settingsPath, sourceSettings);
+  return hasManagedAgentSignature(paths.claudeDir) && settingsLooksManaged(paths.settingsPath, sourceSettings);
 }
 
 function detectInstallState(paths, sourceSettings) {

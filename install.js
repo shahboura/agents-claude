@@ -171,8 +171,15 @@ function createBackupSession(paths, operation) {
       return false;
     }
 
-    const normalizedRelativePath = relativePathFromRoot || path.relative(paths.rootDir, absolutePath);
-    if (!normalizedRelativePath || seen.has(normalizedRelativePath)) {
+    const normalizedRelativePath = path.normalize(relativePathFromRoot || path.relative(paths.rootDir, absolutePath));
+    if (
+      !normalizedRelativePath ||
+      normalizedRelativePath === '.' ||
+      path.isAbsolute(normalizedRelativePath) ||
+      normalizedRelativePath === '..' ||
+      normalizedRelativePath.startsWith(`..${path.sep}`) ||
+      seen.has(normalizedRelativePath)
+    ) {
       return false;
     }
 
@@ -359,6 +366,53 @@ function toManagedPath(scope, relativeClaudeFile) {
     return relativeClaudeFile;
   }
   return path.join('.claude', relativeClaudeFile);
+}
+
+function isPathWithinRoot(rootDir, targetPath) {
+  const resolvedRoot = path.resolve(rootDir);
+  const resolvedTarget = path.resolve(targetPath);
+  return resolvedTarget === resolvedRoot || resolvedTarget.startsWith(`${resolvedRoot}${path.sep}`);
+}
+
+function resolveManagedPathWithinRoot(rootDir, managedPath) {
+  if (typeof managedPath !== 'string') {
+    return null;
+  }
+
+  const normalizedPath = path.normalize(managedPath.trim());
+  if (!normalizedPath || normalizedPath === '.' || path.isAbsolute(normalizedPath)) {
+    return null;
+  }
+
+  const resolvedPath = path.resolve(rootDir, normalizedPath);
+  if (!isPathWithinRoot(rootDir, resolvedPath)) {
+    return null;
+  }
+
+  return resolvedPath;
+}
+
+function resolveManagedFileForUninstall(rootDir, managedPath) {
+  const absolutePath = resolveManagedPathWithinRoot(rootDir, managedPath);
+  if (!absolutePath || !fs.existsSync(absolutePath)) {
+    return null;
+  }
+
+  const rootRealPath = fs.realpathSync(rootDir);
+  const targetRealParentPath = fs.realpathSync(path.dirname(absolutePath));
+  if (!isPathWithinRoot(rootRealPath, targetRealParentPath)) {
+    return null;
+  }
+
+  const safeRelativePath = path.relative(rootDir, absolutePath);
+  if (!safeRelativePath || safeRelativePath === '.' || safeRelativePath === '..' || safeRelativePath.startsWith(`..${path.sep}`)) {
+    return null;
+  }
+
+  return {
+    absolutePath,
+    safeRelativePath,
+  };
 }
 
 function installManagedTree(sourceClaudeDir, sourceFiles, destinationClaudeDir, scope, backupSession) {
@@ -1008,22 +1062,24 @@ function uninstallScope(options) {
     }
   };
 
-  const removeManagedFile = (absolutePath, relativePathFromRoot) => {
-    if (!fs.existsSync(absolutePath)) {
+  const removeManagedFile = (managedPath) => {
+    const resolvedFile = resolveManagedFileForUninstall(paths.rootDir, managedPath);
+    if (!resolvedFile) {
+      warning(`Skipping unsafe managed path during uninstall: ${managedPath}`);
       return;
     }
-    backupSession.backupFile(absolutePath, relativePathFromRoot || path.relative(paths.rootDir, absolutePath));
-    fs.unlinkSync(absolutePath);
+
+    backupSession.backupFile(resolvedFile.absolutePath, resolvedFile.safeRelativePath);
+    fs.unlinkSync(resolvedFile.absolutePath);
     removedFiles += 1;
-    touchedDirectories.add(path.dirname(absolutePath));
+    touchedDirectories.add(path.dirname(resolvedFile.absolutePath));
   };
 
   if (manifest && Array.isArray(manifest.managedFiles)) {
     info(`Using manifest uninstall for ${scope} scope.`);
 
     for (const managedPath of manifest.managedFiles) {
-      const absolutePath = path.join(paths.rootDir, managedPath);
-      removeManagedFile(absolutePath, managedPath);
+      removeManagedFile(managedPath);
     }
 
     const revertResult = revertInstallerSettings(paths.settingsPath, manifest.settingsPatch, sourceSettings, backupSettingsBeforeMutate);
@@ -1045,35 +1101,55 @@ function uninstallScope(options) {
     }
   } else {
     const detectedState = detectInstallState(scope, projectDir, sourceSettings);
+
+    if (detectedState.installed && detectedState.reason === 'version-marker') {
+      info(
+        `No install manifest found for ${scope}. Found version marker only; removing marker file and skipping broad file cleanup.`
+      );
+
+      if (fs.existsSync(paths.versionPath)) {
+        backupSession.backupFile(paths.versionPath, path.relative(paths.rootDir, paths.versionPath));
+      }
+      if (removeIfExists(paths.versionPath)) {
+        removedFiles += 1;
+        touchedDirectories.add(path.dirname(paths.versionPath));
+      }
+      info(`Version-marker-only cleanup completed for ${scope} scope.`);
+      if (removedFiles === 0 && !settingsChanged && !removedSettingsFile) {
+        return true;
+      }
+    }
+
     if (!(detectedState.installed && detectedState.reason === 'legacy-signature')) {
       warning(
         `No install manifest found for ${scope}, and no trusted legacy installer signature was detected. Skipping legacy cleanup.`
       );
-      return true;
-    }
+      if (removedFiles === 0) {
+        return true;
+      }
+    } else {
+      warning(`No install manifest found for ${scope}. Attempting safe legacy cleanup.`);
 
-    warning(`No install manifest found for ${scope}. Attempting safe legacy cleanup.`);
+      const legacyManagedFiles = sourceManagedFiles.map(relative => toManagedPath(scope, relative));
 
-    const legacyManagedFiles = sourceManagedFiles.map(relative => toManagedPath(scope, relative));
+      for (const legacyManagedPath of legacyManagedFiles) {
+        removeManagedFile(legacyManagedPath);
+      }
 
-    for (const legacyManagedPath of legacyManagedFiles) {
-      const absolutePath = path.join(paths.rootDir, legacyManagedPath);
-      removeManagedFile(absolutePath, legacyManagedPath);
-    }
+      const legacySettingsResult = legacySettingsCleanup(paths.settingsPath, sourceSettings, backupSettingsBeforeMutate);
+      settingsChanged = legacySettingsResult.changed;
+      removedSettingsFile = legacySettingsResult.removedFile;
 
-    const legacySettingsResult = legacySettingsCleanup(paths.settingsPath, sourceSettings, backupSettingsBeforeMutate);
-    settingsChanged = legacySettingsResult.changed;
-    removedSettingsFile = legacySettingsResult.removedFile;
+      if (scope === 'project' && fs.existsSync(paths.claudeMdPath)) {
+        info('Leaving existing CLAUDE.md untouched during legacy cleanup (non-manifest path).');
+      }
 
-    if (scope === 'project' && fs.existsSync(paths.claudeMdPath)) {
-      info('Leaving existing CLAUDE.md untouched during legacy cleanup (non-manifest path).');
-    }
-
-    if (fs.existsSync(paths.versionPath)) {
-      backupSession.backupFile(paths.versionPath, path.relative(paths.rootDir, paths.versionPath));
-    }
-    if (removeIfExists(paths.versionPath)) {
-      removedFiles += 1;
+      if (fs.existsSync(paths.versionPath)) {
+        backupSession.backupFile(paths.versionPath, path.relative(paths.rootDir, paths.versionPath));
+      }
+      if (removeIfExists(paths.versionPath)) {
+        removedFiles += 1;
+      }
     }
   }
 

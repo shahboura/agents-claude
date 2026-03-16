@@ -188,6 +188,144 @@ function testSourceRepoDoesNotTriggerLegacyDetection(tmpRoot) {
   assert(status.includes('): not installed'), 'Source repository signature should not be treated as legacy install');
 }
 
+function testLegacyDetectionNeedsAgentSignature(tmpRoot) {
+  const homeDir = path.join(tmpRoot, 'legacy-fp-home');
+  const projectDir = path.join(tmpRoot, 'legacy-fp-project');
+  createDir(homeDir);
+  createDir(projectDir);
+
+  const env = {
+    HOME: homeDir,
+    USERPROFILE: homeDir,
+  };
+
+  createDir(path.join(projectDir, '.claude', 'agents'));
+  createDir(path.join(projectDir, '.claude', 'skills'));
+
+  writeJson(path.join(projectDir, '.claude', 'settings.json'), {
+    permissions: {
+      deny: ['Bash(rm -rf *)'],
+    },
+  });
+
+  const status = runInstaller(['--status'], { cwd: projectDir, env });
+  assert(status.includes('Project ('), 'Status should include project line for legacy false-positive check');
+  assert(status.includes('): not installed'), 'Settings overlap alone should not trigger legacy-signature detection');
+}
+
+function testLegacyDetectionRequiresSettingsOverlap(tmpRoot) {
+  const homeDir = path.join(tmpRoot, 'legacy-strict-home');
+  const projectDir = path.join(tmpRoot, 'legacy-strict-project');
+  createDir(homeDir);
+  createDir(projectDir);
+
+  const env = {
+    HOME: homeDir,
+    USERPROFILE: homeDir,
+  };
+
+  createDir(path.join(projectDir, '.claude', 'agents'));
+  createDir(path.join(projectDir, '.claude', 'skills'));
+  createDir(path.join(projectDir, '.claude', 'hooks'));
+
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'codebase.md'), '# codebase\n');
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'orchestrator.md'), '# orchestrator\n');
+  fs.writeFileSync(path.join(projectDir, '.claude', 'agents', 'review.md'), '# review\n');
+
+  writeJson(path.join(projectDir, '.claude', 'settings.json'), {
+    permissions: {
+      deny: ['Bash(custom-risky-command)'],
+    },
+  });
+
+  const status = runInstaller(['--status'], { cwd: projectDir, env });
+  assert(status.includes('Project ('), 'Status should include project line for strict legacy policy check');
+  assert(status.includes('): not installed'), 'Agent signature without settings overlap should not trigger legacy-signature detection');
+}
+
+function testVersionMarkerOnlyUninstallRemovesMarker(tmpRoot) {
+  const homeDir = path.join(tmpRoot, 'vmu-home');
+  const projectDir = path.join(tmpRoot, 'vmu-project');
+  createDir(homeDir);
+  createDir(projectDir);
+
+  const env = {
+    HOME: homeDir,
+    USERPROFILE: homeDir,
+  };
+
+  runInstaller(['--global'], { cwd: projectDir, env });
+
+  const globalManifestPath = path.join(homeDir, '.claude', '.agents-claude-manifest.json');
+  const globalVersionPath = path.join(homeDir, '.claude', '.claude-agents-version');
+  assert(fs.existsSync(globalManifestPath), 'Manifest should exist before version-marker-only uninstall test');
+  assert(fs.existsSync(globalVersionPath), 'Version marker should exist before version-marker-only uninstall test');
+
+  fs.unlinkSync(globalManifestPath);
+
+  runInstaller(['--uninstall', '--global'], { cwd: projectDir, env });
+  assert(!fs.existsSync(globalVersionPath), 'Version-marker-only uninstall should remove version marker');
+}
+
+function testTamperedManifestPathTraversalIsIgnored(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'tampered-manifest');
+  createDir(projectDir);
+
+  runInstaller(['--project', '.'], { cwd: projectDir });
+
+  const outsideFile = path.join(tmpRoot, 'outside.txt');
+  fs.writeFileSync(outsideFile, 'do-not-delete\n');
+
+  const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const manifest = readJson(manifestPath);
+  manifest.managedFiles = ['../outside.txt'];
+  writeJson(manifestPath, manifest);
+
+  runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
+  assert(fs.existsSync(outsideFile), 'Tampered manifest traversal path must not delete files outside root');
+}
+
+function testTamperedManifestAbsolutePathIsIgnored(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'tampered-absolute-manifest');
+  createDir(projectDir);
+
+  runInstaller(['--project', '.'], { cwd: projectDir });
+
+  const outsideFile = path.join(tmpRoot, 'outside-absolute.txt');
+  fs.writeFileSync(outsideFile, 'do-not-delete-absolute\n');
+
+  const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const manifest = readJson(manifestPath);
+  manifest.managedFiles = [outsideFile];
+  writeJson(manifestPath, manifest);
+
+  runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
+  assert(fs.existsSync(outsideFile), 'Tampered manifest absolute path must not delete files outside root');
+}
+
+function testTamperedManifestSymlinkEscapeIsIgnored(tmpRoot) {
+  const projectDir = path.join(tmpRoot, 'tampered-symlink-manifest');
+  const outsideDir = path.join(tmpRoot, 'outside-symlink-dir');
+  createDir(projectDir);
+  createDir(outsideDir);
+
+  runInstaller(['--project', '.'], { cwd: projectDir });
+
+  const escapedFile = path.join(outsideDir, 'escaped.txt');
+  fs.writeFileSync(escapedFile, 'do-not-delete-symlink\n');
+
+  const symlinkPath = path.join(projectDir, 'link-outside');
+  fs.symlinkSync(outsideDir, symlinkPath, 'dir');
+
+  const manifestPath = path.join(projectDir, '.claude', '.agents-claude-manifest.json');
+  const manifest = readJson(manifestPath);
+  manifest.managedFiles = ['link-outside/escaped.txt'];
+  writeJson(manifestPath, manifest);
+
+  runInstaller(['--uninstall', '--project', '.'], { cwd: projectDir });
+  assert(fs.existsSync(escapedFile), 'Tampered manifest symlink escape must not delete files outside root');
+}
+
 function testSettingsMergePreservesUserData(tmpRoot) {
   const projectDir = path.join(tmpRoot, 'settings-merge');
   createDir(projectDir);
@@ -266,6 +404,12 @@ function main() {
     testStatusDetectionUsesManifestAndVersion(tmpRoot);
     testVersionMarkerDetection(tmpRoot);
     testSourceRepoDoesNotTriggerLegacyDetection(tmpRoot);
+    testLegacyDetectionNeedsAgentSignature(tmpRoot);
+    testLegacyDetectionRequiresSettingsOverlap(tmpRoot);
+    testVersionMarkerOnlyUninstallRemovesMarker(tmpRoot);
+    testTamperedManifestPathTraversalIsIgnored(tmpRoot);
+    testTamperedManifestAbsolutePathIsIgnored(tmpRoot);
+    testTamperedManifestSymlinkEscapeIsIgnored(tmpRoot);
 
     console.log('✅ Installer lifecycle tests passed');
   } catch (err) {
