@@ -2,6 +2,13 @@
 
 All notable changes in this repository are documented here.
 
+## [1.1.1](https://github.com/shahboura/agents-claude/compare/v1.1.0...v1.1.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* rewrite footer via JTD footer_custom.html and add mermaid pan/zoom overlay ([df25010](https://github.com/shahboura/agents-claude/commit/df25010c788998b15ad8ca7a710ae077a6431d4e))
+
 ## [1.1.0](https://github.com/shahboura/agents-claude/compare/v1.0.2...v1.1.0) (2026-03-16)
 
 
